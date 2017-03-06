@@ -17,8 +17,15 @@ class SiteController extends RestController
      */
     public function actionIndex()
     {
+        $url = Core::$app->get('url');
+        if (empty($url)) {
+            return $this->fail('The url or html-code not found');
+        }
         try {
-            $service = VideoServiceFactory::create('https://youtu.be/y0WWSvpIFKw');
+            $service = VideoServiceFactory::create($url);
+            if (is_null($service)) {
+                return $this->fail('Our service is not working with this video service');
+            }
             $info = $service->getInformation();
         } catch (\Throwable $e) {
             return $this->fail($e->getMessage());

@@ -91,23 +91,36 @@ class Core
         $controller = $this->_defaultController;
         $action = 'index';
         $params = [];
-        if ($_SERVER['REQUEST_URI'] != '/') {
+        $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $url_path = trim($url_path, ' /');
+        if (!empty($url_path)) {
+            $uri_parts = explode('/', $url_path);
+            $offset = 0;
+            if (count($uri_parts) >= 2) {
+                try {
+                    $objController = Controller::getController($uri_parts[0]);
+                    if ($objController->hasAction($uri_parts[1])) {
+                        $offset = 2;
+                        $controller = $uri_parts[0];
+                        $action = $uri_parts[1];
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception $e) {
+                    $action = $uri_parts[0];
+                    $offset = 1;
+                }
+            } else {
+                $action = $uri_parts[0];
+                $offset = 1;
+            }
 
-            $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $uri_parts = explode('/', trim($url_path, ' /'));
-
-            $action = array_shift($uri_parts);
-
-            for ($i = 0; $i < count($uri_parts); $i++) {
+            for ($i = $offset; $i < count($uri_parts); $i++) {
                 $params[] = $uri_parts[$i];
             }
         }
 
         try {
-
-            /**
-             * @var \core\Controller $objController
-             */
             $objController = Controller::getController($controller);
             $result = $objController->runAction($action, $params);
         } catch (Exception $e) {

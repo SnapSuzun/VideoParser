@@ -24,14 +24,15 @@ class Youtube extends VideoService
      */
     public function getInformation()
     {
-        if ($this->host == 'youtu.be' || $this->host == 'www.youtu.be') {
+        if ($this->host == 'youtu.be') {
             $this->arguments['v'] = trim($this->path, '/');
         }
 
         if (!isset($this->arguments['v'])) {
             throw new \Exception('The argument with id of video is not found');
         }
-        $result = $this->sendQuery('https://www.googleapis.com/youtube/v3/videos', ['id' => $this->arguments['v'], 'key' => self::API_KEY, 'part' => 'snippet']);
+        $result = $this->sendQuery('https://www.googleapis.com/youtube/v3/videos',
+            ['id' => $this->arguments['v'], 'key' => self::API_KEY, 'part' => 'snippet']);
 
         if ($result['status'] != 'success') {
             throw new \Exception('Video service is not available now. Please, try again later.');

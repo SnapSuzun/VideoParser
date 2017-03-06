@@ -46,6 +46,7 @@ abstract class VideoService
         $urlInfo = parse_url($this->url, PHP_URL_QUERY);
         $this->path = parse_url($this->url, PHP_URL_PATH);
         $this->host = parse_url($this->url, PHP_URL_HOST);
+        $this->host = preg_replace("/^www./", "", $this->host);
 
         if (!empty($urlInfo)) {
             parse_str($urlInfo, $this->arguments);
