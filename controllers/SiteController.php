@@ -18,6 +18,7 @@ class SiteController extends RestController
     public function actionIndex()
     {
         $url = Core::$app->get('url');
+
         if (empty($url)) {
             return $this->fail('The url or html-code not found');
         }

@@ -28,6 +28,10 @@ class Youtube extends VideoService
             $this->arguments['v'] = trim($this->path, '/');
         }
 
+        if (preg_match('*/embed/([^/]+)*', $this->path, $matches)) {
+            $this->arguments['v'] = $matches[1];
+        }
+
         if (!isset($this->arguments['v'])) {
             throw new \Exception('The argument with id of video is not found');
         }

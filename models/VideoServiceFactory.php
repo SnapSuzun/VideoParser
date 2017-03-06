@@ -1,6 +1,7 @@
 <?php
 
 namespace models;
+require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'simple_html_dom.php';
 
 /**
  * Class VideoServiceFactory
@@ -14,6 +15,11 @@ class VideoServiceFactory
      */
     public static function create($url)
     {
+        $html = str_get_html($url);
+        $frame = $html->find('iframe', 0);
+        if (!is_null($frame)) {
+            $url = $frame->src;
+        }
         $urlInfo = parse_url($url);
         if (!isset($urlInfo['host'])) {
             return null;
